@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>Sistema</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- HEADER -->
+    <header class="bg-white shadow">
+        <nav class="flex justify-center space-x-10 py-6">
+            <a href="#"
+               class="text-lg font-semibold text-gray-600 hover:text-blue-600 px-4 py-2 rounded-md transition-colors duration-200"
+               id="ingresos-link">
+                Ingresos
+            </a>
+            <a href="#"
+               class="text-lg font-semibold text-gray-600 hover:text-blue-600 px-4 py-2 rounded-md transition-colors duration-200"
+               id="ventas-link">
+                Ventas
+            </a>
+        </nav>
+    </header>
+
+    <script>
+        // Simular que "Ingresos" está seleccionado
+        const selected = "ingresos"; // puedes cambiar a "ventas"
+
+        const ingresosLink = document.getElementById("ingresos-link");
+        const ventasLink = document.getElementById("ventas-link");
+
+        if (selected === "ingresos") {
+            ingresosLink.classList.remove("text-gray-600");
+            ingresosLink.classList.add("text-blue-600");
+        } else if (selected === "ventas") {
+            ventasLink.classList.remove("text-gray-600");
+            ventasLink.classList.add("text-blue-600");
+        }
+    </script>
+
+</body>
+</html>

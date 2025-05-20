@@ -1,0 +1,72 @@
+﻿@{
+    ViewData["Title"] = "Nuevo Ingreso";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - Gestión de Ventas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container py-5">
+    <h2 class="text-success mb-4"><i class="bi bi-file-earmark-plus"></i> Captura de Nuevo Ingreso</h2>
+
+    <form id="form-ingreso">
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label for="tipoComprobante" class="form-label">Tipo de comprobante</label>
+                <select id="tipoComprobante" class="form-select">
+                    <option>FACTURA</option>
+                    <option>BOLETA</option>
+                    <option>VALE</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="serie" class="form-label">Serie del comprobante</label>
+                <input type="text" class="form-control" id="serie" placeholder="Ej: F001" />
+            </div>
+            <div class="col-md-4">
+                <label for="numero" class="form-label">Número del comprobante</label>
+                <input type="text" class="form-control" id="numero" placeholder="Ej: 000123" />
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="proveedor" class="form-label">Proveedor</label>
+                <select id="proveedor" class="form-select">
+                    <!-- Aquí se cargan dinámicamente con JS o Razor -->
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="impuesto" class="form-label">Impuesto (%)</label>
+                <input type="number" class="form-control" id="impuesto" value="16" min="0" />
+            </div>
+        </div>
+
+        <hr />
+
+        <div class="mb-3">
+            <label for="codigo" class="form-label">Código del artículo</label>
+            <input type="text" class="form-control" id="codigo" placeholder="Ej: A001" />
+        </div>
+
+        <div class="alert alert-secondary text-center">NO HAY DETALLES DE INGRESO.</div>
+
+        <div class="d-flex justify-content-between mt-4">
+            <a href="/Ingresos" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Cancelar
+            </a>
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-check-circle"></i> Guardar
+            </button>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>
