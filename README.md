@@ -75,17 +75,15 @@ Este sistema permite:
 - Asociar detalles de ingreso con productos.
 - Registrar ventas y sus detalles.
 - Calcular subtotales, impuestos (por default 16%) y totales.
-- Validar existencia y duplicidad de artículos.
 - Activar/desactivar registros.
-- Filtrar y buscar productos y proveedores activos.
-
+- Filtrar y buscar Articulos y proveedores activos.
 ---
 
 ##  Estado del Proyecto
 
 - [x] Arquitectura en capas implementada.
 - [x] Servicios de ingresos y ventas funcionando.
-- [x] CRUD básico para artículos, usuarios, personas, categorías.
+- [x] CRUD básico para ingresos y ventas.
 - [ ] Control completo de stock (en progreso).
 - [ ] Refactorización para separar más servicios (opcional).
 
