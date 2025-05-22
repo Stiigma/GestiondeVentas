@@ -5,40 +5,41 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GV.Domain.Models
+namespace GV.Application.DTOs
 {
-    public class Venta
+    public class VentaDTO
     {
-        [Key]
+
         public int IdVenta { get; set; }
 
 
-        [Required]
         public int IdUsuario { get; set; }
+        public string NombreUsu { get; set; }
 
-        [Required]
         public int IdPersona { get; set; }
 
-        [Required]
+        public string NombreProv { get; set; }
+
+
         public string TipoComprobante { get; set; }
 
-        [Required]
+      
         public string SerieComprobante { get; set; }
 
-        [Required]
+      
         public string NumeroComprobante { get; set; }
 
-        [Required]
+      
 
         public DateTime FechaHora { get; set; }
 
-        [Required]
-        public decimal ImpuestoVenta  { get; set; }
 
-        [Required]
+
+        public decimal ImpuestoVenta { get; set; }
+
+  
         public decimal TotalVenta { get; set; }
-        [Required]
-        public bool Estado { get; set; } 
 
+        public bool Estado { get; set; }
     }
 }

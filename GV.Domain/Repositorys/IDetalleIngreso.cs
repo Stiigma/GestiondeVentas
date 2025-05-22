@@ -13,6 +13,10 @@ namespace GV.Domain.Repositorys
 
         Task<List<DetalleIngreso>> ObtenerIngresoConDetalle(int idIngreso);
 
+        Task<bool> EliminarPorId(int IdIngreso);
+
+
+
 
     }
 }

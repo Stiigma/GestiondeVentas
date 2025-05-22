@@ -12,5 +12,8 @@ namespace GV.Domain.Repositorys
 
         Task<IEnumerable<Ingreso>> GetAllIngresosAsync();
         Task<int> CrearIngreso(Ingreso ingreso);
+
+        Task<bool> EditarIngreso(Ingreso ingreso);
+        Task<bool> CambiarEstado(int id);
     }
 }

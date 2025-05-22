@@ -1,4 +1,5 @@
 using GV.Application.Servicios;
+using GV.Domain.Models;
 using GV.Domain.Repositorys;
 using GV.Infrastructure.Data;
 using GV.Infrastructure.Repositorys;
@@ -22,7 +23,10 @@ builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IArticuloRepository, ArticulosRepository>();
 builder.Services.AddScoped<ICategoriaRespository, CategoriaRepository>();
 builder.Services.AddScoped<IDetalleIngreso, DetalleIngresoRepository>();
+builder.Services.AddScoped<IVentasRepository, VentasRepository>();
+builder.Services.AddScoped<IDetalleVentas, DetalleVentasRepository>();
 builder.Services.AddScoped<ServicioIngresos>();
+builder.Services.AddScoped<ServicioVentas>();
 
 var app = builder.Build();
 

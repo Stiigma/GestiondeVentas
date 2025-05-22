@@ -10,46 +10,46 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GV.Infrastructure.Repositorys
 {
-    public class DetalleIngresoRepository : IDetalleIngreso
+    public class DetalleVentasRepository : IDetalleVentas
     {
         private readonly ContextDB _context;
-        public DetalleIngresoRepository(ContextDB context)
+        public DetalleVentasRepository(ContextDB context)
         {
             _context = context;
         }
 
-        public async Task<bool> CrearDetalleIngreso(DetalleIngreso detalleIngreso)
+        public async Task<bool> CrearDetalleVenta(DetalleVenta detalleVenta)
         {
-            _context.DetalleIngreso.Add(detalleIngreso);
+            _context.DetalleVentas.Add(detalleVenta);
             await _context.SaveChangesAsync();
             return true;
         }
 
-        public async Task<List<DetalleIngreso>> ObtenerIngresoConDetalle(int idIngreso)
+        public async Task<List<DetalleVenta>> ObtenerVentaConDetalle(int IdVenta)
         {
-            var detalles = await _context.DetalleIngreso
-                       .Where(d => d.IdIngreso == idIngreso)
+            var detalles = await _context.DetalleVentas
+                       .Where(d => d.IdVenta == IdVenta)
                        .ToListAsync();
 
             if (detalles.Count == 0)
-                return new List<DetalleIngreso>();
+                return new List<DetalleVenta>();
 
             return detalles;
         }
 
 
-        public async Task<bool> EliminarPorId(int IdIngreso)
+        public async Task<bool> EliminarPorId(int IdVenta)
         {
 
             try
             {
                 // Supongamos que tu contexto es _context y la entidad es Ingresos
-                var registros = _context.DetalleIngreso.Where(x => x.IdIngreso == IdIngreso);
+                var ventas = _context.DetalleVentas.Where(x => x.IdVenta == IdVenta);
 
-                if (!registros.Any())
+                if (!ventas.Any())
                     return false;
 
-                _context.DetalleIngreso.RemoveRange(registros);
+                _context.DetalleVentas.RemoveRange(ventas);
                 await _context.SaveChangesAsync();
 
                 return true;

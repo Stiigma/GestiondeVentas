@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Nuevo Ingresov2";
+    ViewData["Title"] = "Nueva Venta";
 }
 
 <!DOCTYPE html>
@@ -13,11 +13,11 @@
 <body class="bg-light">
 
     <div class="container py-5">
-        <h2 class="text-success mb-4"><i class="bi bi-file-earmark-plus"></i> Captura de Nuevo Ingreso</h2>
+        <h2 class="text-success mb-4"><i class="bi bi-file-earmark-plus"></i> Captura de Nueva Venta</h2>
 
-        <form id="form-ingreso">
+        <form id="form-venta">
             <div class="mb-3">
-                <label for="presentacion" class="form-label">ID PERSONA </label>
+                <label for="idPersona" class="form-label">Cliente</label>
                 <select id="idPersona" name="IdPersona" class="form-select" required>
                     <option disabled selected>Seleccione una persona</option>
                 </select>
@@ -28,23 +28,27 @@
                     <select id="tipoComprobante" class="form-select" required>
                         <option>Factura</option>
                         <option>Boleta</option>
-                    </select>
+                    </select> 
+                </div>
+                <div class="col-md-4">
+                    <label for="descuento" class="form-label">Descuento (%)</label>
+                    <input type="number" class="form-control" id="descuento" value="0" min="0" max="100" required />
                 </div>
                 <div class="col-md-4">
                     <label for="serie" class="form-label">Serie del comprobante</label>
-                    <input type="text" class="form-control" id="serie" placeholder="Ej: F001" required/>
+                    <input type="text" class="form-control" id="serie" placeholder="Ej: V001" required />
                 </div>
                 <div class="col-md-4">
                     <label for="numero" class="form-label">Número del comprobante</label>
-                    <input type="text" class="form-control" id="numero" placeholder="Ej: 000123" required />
+                    <input type="text" class="form-control" id="numero" placeholder="Ej: 000789" required />
                 </div>
             </div>
 
             <div class="row mb-3">
                 <div class="col-md-6">
-                    <label for="proveedor" class="form-label">Proveedor</label>
-                    <select id="idUsuario" class="form-select" required>
-                        <option disabled selected>Seleccione un proveedor</option>
+                    <label for="idUsuario" class="form-label">Vendedor</label>
+                    <select id="idUsuario" class="form-select" required >
+                        <option disabled selected>Seleccione un vendedor</option>
                     </select>
                 </div>
                 <div class="col-md-6">
@@ -65,8 +69,8 @@
                 </div>
             </div>
 
-            <div id="detalleIngresoContainer" style="display: none;">
-                <h4 class="text-success mb-3 text-center">Detalle de Ingresos</h4>
+            <div id="detalleVentaContainer" style="display: none;">
+                <h4 class="text-success mb-3 text-center">Detalle de Venta</h4>
 
                 <div class="table-responsive">
                     <table class="table table-bordered" id="tablaDetalles">
@@ -86,17 +90,17 @@
                 <div class="text-end me-2">
                     <p><strong>Total Parcial:</strong> $<span id="totalParcial">0.00</span></p>
                     <p><strong>Total Impuesto:</strong> $<span id="totalImpuesto">0.00</span></p>
+                    <p><strong>Total Descuento:</strong> $<span id="totalDescuento">0.00</span></p>
                     <p><strong>Total Neto:</strong> $<span id="totalNeto">0.00</span></p>
                 </div>
             </div>
 
             <div id="sinDetalles" class="alert alert-secondary text-center">
-                NO HAY DETALLES DE INGRESO.
+                NO HAY DETALLES DE VENTA.
             </div>
 
-
             <div class="d-flex justify-content-between mt-4">
-                <a href="/Ingresos" class="btn btn-outline-secondary">
+                <a href="/Ventas" class="btn btn-outline-secondary">
                     <i class="bi bi-arrow-left"></i> Cancelar
                 </a>
                 <button type="submit" class="btn btn-success">
@@ -137,11 +141,14 @@
         </div>
     </div>
 
+    <!-- 🧠 Script de configuración -->
     <script>
         const modoEdicion = "@((ViewBag.ModoEdicion ?? false).ToString().ToLower())" === "true";
-        const ingresoId = "@(ViewBag.IdEditar ?? "null")";
+        const ventaId = "@(ViewBag.IdEditar ?? "null")";
     </script>
+
+    <!-- Bootstrap + Script de lógica -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/ingresoForm.js"></script>
+    <script src="~/js/ventaForm.js"></script>
 </body>
 </html>

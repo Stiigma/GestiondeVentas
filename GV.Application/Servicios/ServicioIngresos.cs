@@ -55,6 +55,9 @@ namespace GV.Application.Servicios
         public async Task<List<DetalleIngreso>> ObtenerIngresoConDetalle(int IdIngreso)
         {
             return await _detalleIngreso.ObtenerIngresoConDetalle(IdIngreso);
+
+
+
         }
 
 
@@ -107,6 +110,65 @@ namespace GV.Application.Servicios
             }
 
             return newList;
+
+        }
+
+        public async Task<bool> CambiarEstado(int id)
+        {
+            var result = await _ingresoRepository.CambiarEstado(id);
+            if(!result)
+                return false;
+
+            return true;
+        }
+
+        public async Task<bool> editarIngreso(IngresoViewDTO ingresoView)
+        {
+
+
+            
+            var newIngreso = new Ingreso
+            {
+                IdIngreso = ingresoView.IdIngreso,
+                IdPersona = ingresoView.IdPersona,
+                IdUsuario = ingresoView.IdUsuario,
+                SerieComprobante = ingresoView.SerieComprobante,
+                Estado = true,
+                FechaHoraIngreso = DateTime.Now,
+                Impuesto = ingresoView.Impuesto,
+                NumeroComprabante = ingresoView.NumeroComprabante,
+                TipoComprobante = ingresoView.TipoComprobante,
+                TotalIngreso = ingresoView.TotalIngreso,
+            };
+
+            if(ingresoView.Articulos.Count == 0)
+                newIngreso.TotalIngreso = 0;
+
+            var editbool = await _ingresoRepository.EditarIngreso(newIngreso);
+            var boolR = await _detalleIngreso.EliminarPorId(ingresoView.IdIngreso);
+
+            foreach (var articulo in ingresoView.Articulos)
+            {
+                for (int i = 0; i < articulo.Cantidad; i++)
+                {
+                    var newDetalle = new DetalleIngreso
+                    {
+                        IdArticulo = articulo.IdArticulo,
+                        IdIngreso = newIngreso.IdIngreso,
+                        Cantidad = 1,
+                        PrecioVenta = articulo.PrecioVenta,
+                    };
+
+                    var result = await _detalleIngreso.CrearDetalleIngreso(newDetalle);
+                    if (!result)
+                        await _detalleIngreso.CrearDetalleIngreso(newDetalle);
+
+
+
+                }
+            }
+            return editbool;
+
 
         }
 

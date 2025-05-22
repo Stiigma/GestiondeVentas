@@ -10,40 +10,40 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GV.Infrastructure.Repositorys
 {
-    public class IngresoRepository : IIngresoRepository
+    public class VentasRepository : IVentasRepository
     {
         private readonly ContextDB _context;
 
-        public IngresoRepository(ContextDB context)
+        public VentasRepository(ContextDB context)
         {
             _context = context;
         }
 
-        public async Task<IEnumerable<Ingreso>> GetAllIngresosAsync()
+        public async Task<IEnumerable<Venta>> GetAllVentasAsync()
         {
-            return await _context.Ingresos.ToListAsync();
+            return await _context.Ventas.ToListAsync();
         }
 
 
-        public async Task<int> CrearIngreso(Ingreso ingreso)
+        public async Task<int> CrearVenta(Venta venta)
         {
-            _context.Ingresos.Add(ingreso);
+            _context.Ventas.Add(venta);
             await _context.SaveChangesAsync();
 
-            return ingreso.IdIngreso;
+            return venta.IdVenta;
         }
 
-        public async Task<bool> EditarIngreso(Ingreso ingreso)
+        public async Task<bool> EditarVenta(Venta venta)
         {
-            var ingresoExistente = await _context.Ingresos.FindAsync(ingreso.IdIngreso);
+            var ventaExistente = await _context.Ventas.FindAsync(venta.IdVenta);
 
-            if (ingresoExistente == null)
+            if (ventaExistente == null)
             {
                 return false; // No se encontró el ingreso con ese Id
             }
 
             // Opcional: actualizar solo propiedades específicas
-            _context.Entry(ingresoExistente).CurrentValues.SetValues(ingreso);
+            _context.Entry(ventaExistente).CurrentValues.SetValues(venta);
 
             await _context.SaveChangesAsync();
             return true;
@@ -51,11 +51,11 @@ namespace GV.Infrastructure.Repositorys
 
         public async Task<bool> CambiarEstado(int id)
         {
-            var ingreso = await _context.Ingresos.FindAsync(id);
-            if (ingreso == null)
+            var venta = await _context.Ventas.FindAsync(id);
+            if (venta == null)
                 return false;
 
-            ingreso.Estado = !ingreso.Estado;
+            venta.Estado = !venta.Estado;
 
             await _context.SaveChangesAsync();
 

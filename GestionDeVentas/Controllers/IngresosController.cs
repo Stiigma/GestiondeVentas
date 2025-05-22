@@ -2,6 +2,7 @@
 using GV.Application.DTOs;
 using GV.Application.Servicios;
 using GV.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace GestionDeVentas.Controllers
 {
@@ -71,6 +72,43 @@ namespace GestionDeVentas.Controllers
             {
                 ModelState.AddModelError("", "Error al guardar ingreso: " + ex.Message);
                 return View(ingreso);
+            }
+        }
+
+
+        [HttpPost("editar")]
+        public async Task<IActionResult> editar(IngresoViewDTO ingreso)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(ingreso);
+            }
+
+            try
+            {
+                await _ingresoService.editarIngreso(ingreso); 
+                return RedirectToAction("Index"); 
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Error al guardar ingreso: " + ex.Message);
+                return View(ingreso);
+            }
+        }
+
+        [HttpPost("CambiarEstado/{id}")]
+        public async Task<IActionResult> CambiarEstado(int id)
+        {
+
+            try
+            {
+                await _ingresoService.CambiarEstado(id);
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Error al guardar ingreso: " + ex.Message);
+                return View(id);
             }
         }
 

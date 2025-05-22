@@ -62,11 +62,15 @@ function renderizarTablaIngresos(lista) {
              <td class="text-end">$${ingreso.impuesto.toFixed(2)}</td>
             <td class="text-end">$${ingreso.totalIngreso.toFixed(2)}</td>
             <td class="text-center">
-                ${ingreso.estado
-                ? '<span class="text-success fs-5">✔️</span>'
-                : '<span class="text-danger fs-5">❌</span>'}
-                <a href="/Ingresos/Editar/${ingreso.idIngreso}" class="btn btn-warning btn-sm">
-                    <i class="bi bi-pencil-square"></i> Editar
+                <button
+                    class="btn btn-sm ${ingreso.estado ? 'btn-success' : 'btn-danger'}"
+                    onclick="confirmarCambioEstado(${ingreso.idIngreso}, ${ingreso.estado})">
+                    <i class="bi ${ingreso.estado ? 'bi-check-circle' : 'bi-x-circle'}"></i>
+                </button>
+                <a href="/Ingresos/Editar/${ingreso.idIngreso}" 
+                   class="btn btn-warning btn-sm"
+                   onclick='guardarIngresoLocal(${JSON.stringify(ingreso)})'>
+                   <i class="bi bi-pencil-square"></i> Editar
                 </a>
             </td>
         </tr>
@@ -77,6 +81,50 @@ function renderizarTablaIngresos(lista) {
     container.innerHTML = html;
 }
 
+let ingresoSeleccionado = 0;
+let estadoActual = true;
+function confirmarCambioEstado(id, estado) {
+    ingresoSeleccionado = id;
+    estadoActual = estado;
+
+    const mensaje = estado
+        ? "¿Está seguro que desea <strong>desactivar</strong> este ingreso?"
+        : "¿Está seguro que desea <strong>activar</strong> este ingreso?";
+
+    document.getElementById("modalEstadoMensaje").innerHTML = mensaje;
+    const modal = new bootstrap.Modal(document.getElementById('modalConfirmarEstado'));
+    modal.show();
+}
+
+document.getElementById("btnConfirmarCambioEstado").addEventListener("click", async function () {
+    console.log("Entrando..")
+    try {
+        const id = parseInt(ingresoSeleccionado);
+        console.log(id);
+        if (isNaN(id)) {
+            alert("ID no válido.");
+            return;
+        }
+        console.log(id);
+        const response = await fetch(`/Ingresos/CambiarEstado/${id}`, {
+            method: "POST"
+        });
+
+        if (response.ok) {
+            window.location.reload();
+        } else {
+            alert("Error al cambiar el estado.");
+        }
+    } catch (err) {
+        console.error("❌ Error:", err);
+        alert("Error inesperado.");
+    }
+});
+
+
+function guardarIngresoLocal(ingreso) {
+    localStorage.setItem("ingresoEditar", JSON.stringify(ingreso));
+}
 
 function filtrarTabla() {
     const texto = document.getElementById("busquedaInput").value.toLowerCase();
@@ -99,3 +147,5 @@ function filtrarTabla() {
 document.addEventListener("DOMContentLoaded", () => {
     cargarIngresos();
 });
+
+

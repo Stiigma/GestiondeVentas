@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GV.Domain.Models;
 
 namespace GV.Application.DTOs
 {
-    public class IngresoViewDTO
+    public class VentaViewDTO
     {
-
-        public int IdIngreso { get; set; }
+        public int IdVenta { get; set; }
         public int IdUsuario { get; set; }
         public int IdPersona { get; set; }
 
@@ -19,12 +19,11 @@ namespace GV.Application.DTOs
 
         public string NumeroComprabante { get; set; }
 
-        public decimal Impuesto { get; set; }
+        public decimal ImpuestoVenta { get; set; }
 
-        public decimal TotalIngreso { get; set; }
+        public decimal TotalVenta { get; set; }
 
 
-        public List<DetalleIngresoDTO> Articulos { get; set; }
-
+        public List<DetalleVentaDTO> Articulos { get; set; }
     }
 }

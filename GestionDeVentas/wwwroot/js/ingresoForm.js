@@ -1,6 +1,7 @@
 ﻿
 // Lista donde se almacenan los artículos seleccionados para el ingreso
- const articulosSeleccionados = [];
+const articulosSeleccionados = [];
+var idIngreso = 0;
 console.log(articulosSeleccionados)
 
 async function cargarArticulos(filtro = "") {
@@ -48,6 +49,48 @@ async function cargarArticulos(filtro = "") {
     }
 }
 
+
+async function cargarDetallesPorId(idIngreso) {
+    try {
+        const response = await fetch(`/Ingresos/obtener-dI/${idIngreso}`);
+        console.log(response);
+        if (!response.ok) {
+            throw new Error("No se pudo obtener los detalles del ingreso.");
+        }
+
+        const detalles = await response.json();
+        console.log(detalles);
+
+        // Opcional: puedes cargar la lista completa si necesitas nombre del artículo
+        const articulosResponse = await fetch("/Ingresos/lista-articulos");
+        if (!articulosResponse.ok) throw new Error("Error al obtener artículos");
+        const articulos = await articulosResponse.json();
+        console.log(articulos);
+        // Limpiar el array actual
+        articulosSeleccionados.length = 0;
+
+        // Insertar los nuevos detalles
+        detalles.forEach(det => {
+            const articuloEncontrado = articulos.find(a => a.idArticulo === det.idArticulo);
+            articulosSeleccionados.push({
+                idArticulo: det.idArticulo,
+                cantidad: det.cantidad,
+                precioVenta: det.precioVenta,
+                nombreArticulo: articuloEncontrado ? articuloEncontrado.nombreArticulo : `Artículo ${det.idArticulo}`
+            });
+        });
+        
+        renderizarDetalles();
+        console.log("logrado");
+        console.log("✅ Detalles cargados en articulosSeleccionados");
+
+    } catch (error) {
+        console.error("❌ Error en cargarDetallesPorId:", error);
+        alert("No se pudieron cargar los detalles del ingreso.");
+    }
+}
+
+
 async function cargarProveedores() {
     const select = document.getElementById("idUsuario");
 
@@ -71,6 +114,32 @@ async function cargarProveedores() {
     } catch (error) {
         console.error("Error cargando proveedores:", error);
         select.innerHTML = '<option disabled selected>Error al cargar</option>';
+    }
+}
+
+async function cargarPersonas() {
+    const select = document.getElementById("idPersona");
+
+    try {
+        const response = await fetch("/Ingresos/lista-personas");
+
+        if (!response.ok) throw new Error("Error al obtener personas");
+
+        const personas = await response.json();
+        console.log("Personas recibidas:", personas);
+
+        select.innerHTML = '<option disabled selected>Seleccione una persona</option>';
+
+        personas.forEach(persona => {
+            const option = document.createElement("option");
+            option.value = persona.idPersona;
+            option.textContent = persona.nombrePersona;
+            select.appendChild(option);
+        });
+
+    } catch (error) {
+        console.error("Error cargando personas:", error);
+        select.innerHTML = '<option disabled selected>Error al cargar personas</option>';
     }
 }
 
@@ -116,6 +185,12 @@ function renderizarDetalles() {
     const contenedor = document.getElementById("detalleIngresoContainer");
     const sinDetalles = document.getElementById("sinDetalles");
 
+    // Validar que los elementos existen
+    if (!tbody || !contenedor || !sinDetalles) {
+        console.warn("⛔ Uno o más elementos del DOM no están disponibles aún.");
+        return;
+    }
+
     tbody.innerHTML = "";
 
     if (articulosSeleccionados.length === 0) {
@@ -140,7 +215,7 @@ function renderizarDetalles() {
         fila.innerHTML = `
             <td>${articulo.nombreArticulo}</td>
             <td class="text-center">
-                <input type="number" min="1" value="${cantidad}" class="form-control form-control-sm text-center"
+                <input type="number" min="1" value="${cantidad}" max="${articulo.stock}" class="form-control form-control-sm text-center"
                     onchange="actualizarCantidad(${index}, this.value)" />
             </td>
             <td class="text-end">$${precio.toFixed(2)}</td>
@@ -153,20 +228,25 @@ function renderizarDetalles() {
         `;
         tbody.appendChild(fila);
     });
+  
 
-    const impuesto = totalParcial * (parseFloat(document.getElementById("impuesto").value || 0) / 100);
+    const impuesto = totalParcial * (parseFloat(document.getElementById("impuesto")?.value || 0) / 100);
+    
     const totalNeto = totalParcial + impuesto;
-
     document.getElementById("totalParcial").textContent = totalParcial.toFixed(2);
     document.getElementById("totalImpuesto").textContent = impuesto.toFixed(2);
+
     document.getElementById("totalNeto").textContent = totalNeto.toFixed(2);
-    document.getElementById("totalIngreso").value = totalNeto.toFixed(2);
+
+    
 }
+
 
 
 
 function construirJsonIngreso() {
     const ingreso = {
+        idIngreso: idIngreso,
         idUsuario: parseInt(document.getElementById("idUsuario")?.value || "0"),
         idPersona: parseInt(document.getElementById("idPersona")?.value || "0"),
         tipoComprobante: document.getElementById("tipoComprobante").value,
@@ -186,13 +266,26 @@ function construirJsonIngreso() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    cargarProveedores();
-    cargarArticulos();
+    setTimeout(async () => {
+        if (modoEdicion !== true && modoEdicion !== "true") {
+            localStorage.removeItem("ingresoEditar");
+            await Promise.all([
+                cargarPersonas(), // <-- asegúrate de que esta función sea async también
+                cargarProveedores(),
+                cargarArticulos(),
+                //cargarDetallesPorId(ingreso.idIngreso)
+            ]);
+            limpiarFormulario();
+        } else {
+            await cargarRe();
+            console.log("✅ Se ejecutó cargarRe()");
+        }
 
-    const buscador = document.getElementById("buscarArticulo");
-    buscador.addEventListener("input", () => {
-        cargarArticulos(buscador.value);
-    });
+        const buscador = document.getElementById("buscarArticulo");
+        buscador?.addEventListener("input", () => {
+            cargarArticulos(buscador.value);
+        });
+    }, 50); // Espera 50ms para asegurar que el DOM esté completamente renderizado
 });
 
 
@@ -230,15 +323,21 @@ document.getElementById("form-ingreso").addEventListener("submit", async functio
 
     const jsonFinal = construirJsonIngreso();
     console.log("🟢 Enviando JSON al backend:", jsonFinal);
+    console.log("🟢 Enviando JSON al backend:", jsonFinal.totalIngreso);
 
     try {
-        const response = await fetch('/Ingresos/Create', {
+        const endpoint = (modoEdicion === true || modoEdicion === "true")
+            ? '/Ingresos/Editar'   // o el nombre de tu acción editar en el controlador
+            : '/Ingresos/Create';
+        console.log(endpoint);
+        const response = await fetch(endpoint, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(jsonFinal)
         });
+
 
         if (response.ok) {
             // Redirigir o mostrar éxito
@@ -297,3 +396,48 @@ async function precargarIngreso(id) {
     }
 }
 
+
+async function cargarRe() {
+    const ingresoRaw = localStorage.getItem("ingresoEditar");
+
+    if (!ingresoRaw) return;
+
+    const ingreso = JSON.parse(ingresoRaw);
+    idIngreso = ingreso.idIngreso;
+    console.log("Ingreso iD:", idIngreso);
+    console.log("Ingreso cargado:", ingreso);
+    await Promise.all([
+        cargarPersonas(), // <-- asegúrate de que esta función sea async también
+        cargarProveedores(),
+        cargarArticulos(),
+        cargarDetallesPorId(ingreso.idIngreso)
+    ]);
+   
+
+    
+
+
+    // Esperar a que se hayan cargado las opciones del select
+    
+
+    // Asignar valores a los inputs
+    document.getElementById("idPersona").value = ingreso.idPersona;
+    document.getElementById("idUsuario").value = ingreso.idUsuario;
+    document.getElementById("tipoComprobante").value = ingreso.tipoComprobante;
+    document.getElementById("serie").value = ingreso.serieComprobante;
+    document.getElementById("numero").value = ingreso.numeroComprabante;
+    document.getElementById("impuesto").value = ingreso.impuesto;
+}
+
+
+function limpiarFormulario() {
+    document.getElementById("idPersona").value = "";
+    document.getElementById("idUsuario").value = "";
+    document.getElementById("tipoComprobante").value = "Factura"; // o ""
+    document.getElementById("serie").value = "";
+    document.getElementById("numero").value = "";
+    document.getElementById("impuesto").value = 16;
+    articulosSeleccionados.length = 0;
+    idIngreso = 0;
+    renderizarDetalles();
+}
